@@ -24,11 +24,11 @@ Prerequisites:</br>
  - finished work should include pool request ready to merge to master</br>
  - the link to the pool request should be sent as a result of the work
 1. Run integration tests. Fix failed integration tests (IT) if any.</br>
-Additional info. You should not change IT, they are correct, you should find errors in the business logic.
+Additional info. You should not change IT, they are correct, you should find errors in business logic.
 2. We have Shipment.java class with the fields: weight, length, width, height, declaredPrice, price.
    The task is to create Parcel.java and ParcelItem.java classes.</br>
    Shipment should have a list of parcels and parcel should have a list of parcel items.</br>
-   Shipment fields (weight, length, width, height, declaredPrice, price) should be removed and put to the class Parcel.java. Only price field should be in both Shipment and Parcel</br>
+   Shipment fields (weight, length, width, height, declaredPrice, price) should be removed to the class Parcel.java.</br>
    Shipment.price should be equals to the sum of prices of all Parcels in the Shipment.</br>
    The current shipment price calculation should be moved to the parcel, every parcel in the shipment should be calculated and the sum of parcels prices should be written into the shipement price.</br>
    ParcelItem.java should have fields: name, quantity, weight, price - all this info just for statistic and shouldn't be used for calculation price of the shipment or something.</br>

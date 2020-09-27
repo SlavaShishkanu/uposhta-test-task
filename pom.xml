@@ -21,6 +21,7 @@
         <rest-assured.version>3.0.2</rest-assured.version>
         <junit.version>4.12</junit.version>
         <hsqldb.version>2.3.2</hsqldb.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -115,7 +116,7 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
-            <scope>test</scope>
+             <scope>test</scope>
         </dependency>
         <!-- jsonassert -->
         <dependency>

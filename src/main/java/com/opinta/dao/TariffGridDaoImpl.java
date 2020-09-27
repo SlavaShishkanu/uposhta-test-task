@@ -1,7 +1,5 @@
 package com.opinta.dao;
 
-import com.opinta.entity.TariffGrid;
-import com.opinta.entity.W2wVariation;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -9,13 +7,16 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import com.opinta.entity.TariffGrid;
+import com.opinta.entity.W2wVariation;
 
 @Repository
 public class TariffGridDaoImpl implements TariffGridDao {
+    private static final String ID2 = "id";
+    private static final String W2W_VARIATION = "w2wVariation";
     private final SessionFactory sessionFactory;
 
     @Autowired
@@ -59,13 +60,13 @@ public class TariffGridDaoImpl implements TariffGridDao {
     @Override
     @SuppressWarnings("unchecked")
     public TariffGrid getByDimension(float weight, float length, W2wVariation w2wVariation) {
-        String id = "id";
+        String id = ID2;
         Session session = sessionFactory.getCurrentSession();
         DetachedCriteria minId = DetachedCriteria.forClass(TariffGrid.class).setProjection(Projections.min(id));
         return (TariffGrid) session.createCriteria(TariffGrid.class)
                 .add(Restrictions.and(Restrictions.ge("weight", weight),
                         Restrictions.ge("length", length),
-                        Restrictions.eq("w2wVariation", w2wVariation)))
+                        Restrictions.eq(W2W_VARIATION, w2wVariation)))
                 .addOrder(Order.asc(id))
                 .setMaxResults(1)
                 .uniqueResult();
@@ -73,10 +74,10 @@ public class TariffGridDaoImpl implements TariffGridDao {
 
     @Override
     public TariffGrid getLast(W2wVariation w2wVariation) {
-        String id = "id";
+        String id = ID2;
         Session session = sessionFactory.getCurrentSession();
         return (TariffGrid) session.createCriteria(TariffGrid.class)
-                .add(Restrictions.eq("w2wVariation", w2wVariation))
+                .add(Restrictions.eq(W2W_VARIATION, w2wVariation))
                 .addOrder(Order.desc(id))
                 .setMaxResults(1)
                 .uniqueResult();

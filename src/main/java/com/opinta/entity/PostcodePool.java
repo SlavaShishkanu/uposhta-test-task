@@ -12,13 +12,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 /**
- * PostcodePool holds all postcodes ("00000"-"99999") and pool of the inner numbers for each postcode
- * It shouldn't have field like Client or PostOffice.
- * Client and PostOffice should have reference to it instead
+ * PostcodePool holds all postcodes ("00000"-"99999") and pool of the inner numbers for each
+ * postcode It shouldn't have field like Client or PostOffice. Client and PostOffice should have
+ * reference to it instead
  */
 @Entity
 @Data
@@ -30,8 +29,8 @@ public class PostcodePool {
     @NotNull
     @Size(min = 5, max = 5)
     private String postcode;
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name="postcode_pool_id")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "postcode_pool_id")
     private List<BarcodeInnerNumber> barcodeInnerNumbers = new ArrayList<>();
     private boolean closed;
 

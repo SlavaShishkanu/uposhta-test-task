@@ -2,9 +2,7 @@ package com.opinta.service;
 
 import com.opinta.entity.Counterparty;
 import java.util.List;
-
 import javax.transaction.Transactional;
-
 import com.opinta.dao.ClientDao;
 import com.opinta.dao.CounterpartyDao;
 import com.opinta.dto.ClientDto;
@@ -13,19 +11,19 @@ import com.opinta.entity.Client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import static org.apache.commons.beanutils.BeanUtils.copyProperties;
 
 @Service
 @Slf4j
 public class ClientServiceImpl implements ClientService {
+    private static final String GETTING_ALL_CLIENTS = "Getting all clients";
     private final ClientDao clientDao;
     private final CounterpartyDao counterpartyDao;
     private final ClientMapper clientMapper;
 
     @Autowired
     public ClientServiceImpl(ClientDao clientDao, ClientMapper clientMapper,
-                             CounterpartyDao counterpartyDao) {
+            CounterpartyDao counterpartyDao) {
         this.clientDao = clientDao;
         this.clientMapper = clientMapper;
         this.counterpartyDao = counterpartyDao;
@@ -34,7 +32,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     @Transactional
     public List<Client> getAllEntities() {
-        log.info("Getting all clients");
+        log.info(GETTING_ALL_CLIENTS);
         return clientDao.getAll();
     }
 
@@ -55,7 +53,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     @Transactional
     public List<ClientDto> getAll() {
-        log.info("Getting all clients");
+        log.info(GETTING_ALL_CLIENTS);
         List<Client> allClients = clientDao.getAll();
         return clientMapper.toDto(allClients);
     }
@@ -65,7 +63,8 @@ public class ClientServiceImpl implements ClientService {
     public List<ClientDto> getAllByCounterpartyId(long counterpartyId) {
         Counterparty counterparty = counterpartyDao.getById(counterpartyId);
         if (counterparty == null) {
-            log.debug("Can't get client list by counterparty. Counterparty {} doesn't exist", counterpartyId);
+            log.debug("Can't get client list by counterparty. Counterparty {} doesn't exist",
+                    counterpartyId);
             return null;
         }
         log.info("Getting all clients by counterparty {}", counterparty);

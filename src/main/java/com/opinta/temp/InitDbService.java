@@ -14,9 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
-
 import com.opinta.dto.AddressDto;
 import com.opinta.dto.BarcodeInnerNumberDto;
 import com.opinta.dto.PostcodePoolDto;
@@ -32,6 +30,8 @@ import com.opinta.entity.Address;
 import com.opinta.entity.BarcodeInnerNumber;
 import com.opinta.entity.Client;
 import com.opinta.entity.DeliveryType;
+import com.opinta.entity.Parcel;
+import com.opinta.entity.ParcelItem;
 import com.opinta.entity.PostOffice;
 import com.opinta.entity.PostcodePool;
 import com.opinta.entity.Shipment;
@@ -44,12 +44,19 @@ import com.opinta.service.ShipmentService;
 import com.opinta.service.CounterpartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import static com.opinta.entity.BarcodeStatus.RESERVED;
 import static com.opinta.entity.BarcodeStatus.USED;
 
+// TODO
 @Service
 public class InitDbService {
+    private static final String _00001 = "00001";
+    private static final String MONASTIRISKA = "Monastiriska";
+    private static final String KIEV = "Kiev";
+    private static final String _00002 = "00002";
+    private static final String _2_5 = "2.5";
+    private static final String _0_5 = "0.5";
+    private static final String _19_5 = "19.5";
     private BarcodeInnerNumberService barcodeInnerNumberService;
     private PostcodePoolService postcodePoolService;
     private ClientService clientService;
@@ -70,12 +77,13 @@ public class InitDbService {
     private ShipmentTrackingDetailMapper shipmentTrackingDetailMapper;
 
     @Autowired
-    public InitDbService(
-            BarcodeInnerNumberService barcodeInnerNumberService, PostcodePoolService postcodePoolService,
-            ClientService clientService, AddressService addressService, ShipmentService shipmentService,
+    public InitDbService(BarcodeInnerNumberService barcodeInnerNumberService,
+            PostcodePoolService postcodePoolService, ClientService clientService,
+            AddressService addressService, ShipmentService shipmentService,
             CounterpartyService counterpartyService, PostOfficeService postOfficeService,
-            ShipmentTrackingDetailService shipmentTrackingDetailService, TariffGridService tariffGridService,
-            ClientMapper clientMapper, AddressMapper addressMapper, PostcodePoolMapper postcodePoolMapper,
+            ShipmentTrackingDetailService shipmentTrackingDetailService,
+            TariffGridService tariffGridService, ClientMapper clientMapper,
+            AddressMapper addressMapper, PostcodePoolMapper postcodePoolMapper,
             BarcodeInnerNumberMapper barcodeInnerNumberMapper, ShipmentMapper shipmentMapper,
             PostOfficeMapper postOfficeMapper, CounterpartyMapper counterpartyMapper,
             ShipmentTrackingDetailMapper shipmentTrackingDetailMapper) {
@@ -108,65 +116,106 @@ public class InitDbService {
         populateTariffGrid();
 
         // create PostcodePool with BarcodeInnerNumber
-        PostcodePoolDto postcodePoolDto = postcodePoolMapper.toDto(new PostcodePool("00001", false));
+        PostcodePoolDto postcodePoolDto =
+                postcodePoolMapper.toDto(new PostcodePool(_00001, false));
         final long postcodePoolId = postcodePoolService.save(postcodePoolDto).getId();
 
         List<BarcodeInnerNumberDto> barcodeInnerNumbers = new ArrayList<>();
-        barcodeInnerNumbers.add(barcodeInnerNumberMapper.toDto(new BarcodeInnerNumber("0000001", USED)));
-        barcodeInnerNumbers.add(barcodeInnerNumberMapper.toDto(new BarcodeInnerNumber("0000002", RESERVED)));
-        barcodeInnerNumbers.add(barcodeInnerNumberMapper.toDto(new BarcodeInnerNumber("0000003", RESERVED)));
+        barcodeInnerNumbers
+                .add(barcodeInnerNumberMapper.toDto(new BarcodeInnerNumber("0000001", USED)));
+        barcodeInnerNumbers
+                .add(barcodeInnerNumberMapper.toDto(new BarcodeInnerNumber("0000002", RESERVED)));
+        barcodeInnerNumbers
+                .add(barcodeInnerNumberMapper.toDto(new BarcodeInnerNumber("0000003", RESERVED)));
 
         postcodePoolService.addBarcodeInnerNumbers(postcodePoolId, barcodeInnerNumbers);
 
         // create Address
         List<AddressDto> addresses = new ArrayList<>();
         List<AddressDto> addressesSaved = new ArrayList<>();
-        addresses.add(addressMapper.toDto(new Address("00001", "Ternopil", "Monastiriska", "Monastiriska", "Sadova", "51", "")));
-        addresses.add(addressMapper.toDto(new Address("00002", "Kiev", "", "Kiev", "Khreschatik", "121", "37")));
-        addresses.forEach((AddressDto addressDto) -> addressesSaved.add(addressService.save(addressDto)));
+        addresses.add(addressMapper.toDto(new Address(_00001, "Ternopil", MONASTIRISKA,
+                MONASTIRISKA, "Sadova", "51", "")));
+        addresses.add(addressMapper
+                .toDto(new Address(_00002, KIEV, "", KIEV, "Khreschatik", "121", "37")));
+        addresses.forEach(
+                (AddressDto addressDto) -> addressesSaved.add(addressService.save(addressDto)));
 
         // create Client with Counterparty
-        PostcodePoolDto postcodePoolDto1 = postcodePoolMapper.toDto(new PostcodePool("00003", false));
+        PostcodePoolDto postcodePoolDto1 =
+                postcodePoolMapper.toDto(new PostcodePool("00003", false));
         PostcodePoolDto postcodePoolDtoSaved1 = postcodePoolService.save(postcodePoolDto1);
-        Counterparty counterparty = new Counterparty("Modna kasta",
-                postcodePoolMapper.toEntity(postcodePoolDtoSaved1));
+        Counterparty counterparty =
+                new Counterparty("Modna kasta", postcodePoolMapper.toEntity(postcodePoolDtoSaved1));
         CounterpartyDto counterpartyDto = this.counterpartyMapper.toDto(counterparty);
         counterpartyDto = counterpartyService.save(counterpartyDto);
         counterparty = counterpartyMapper.toEntity(counterpartyDto);
         List<Client> clients = new ArrayList<>();
         List<Client> clientsSaved = new ArrayList<>();
-        clients.add(new Client("FOP Ivanov", "001",
-                addressMapper.toEntity(addressesSaved.get(0)), counterparty));
-        clients.add(new Client("Petrov PP", "002",
-                addressMapper.toEntity(addressesSaved.get(1)), counterparty));
-        clients.forEach((Client client) ->
-            clientsSaved.add(this.clientMapper.toEntity(clientService.save(this.clientMapper.toDto(client))))
-        );
+        clients.add(new Client("FOP Ivanov", "001", addressMapper.toEntity(addressesSaved.get(0)),
+                counterparty));
+        clients.add(new Client("Petrov PP", "002", addressMapper.toEntity(addressesSaved.get(1)),
+                counterparty));
+        clients.forEach((Client client) -> clientsSaved.add(
+                this.clientMapper.toEntity(clientService.save(this.clientMapper.toDto(client)))));
+
+        // Create shipment then parcel then ParcelItem
 
         // create Shipment
         List<ShipmentDto> shipmentsSaved = new ArrayList<>();
-        Shipment shipment = new Shipment(clientsSaved.get(0), clientsSaved.get(1), DeliveryType.W2W, 1, 1,
-                new BigDecimal("12.5"), new BigDecimal("2.5"), new BigDecimal("15"));
+
+        List<Parcel> parcels = new ArrayList<>();
+        Parcel parcel = new Parcel(1, 1, new BigDecimal("12.5"), new BigDecimal(_2_5));
+        parcels.add(parcel);
+
+        Shipment shipment = new Shipment(clientsSaved.get(0), clientsSaved.get(1), DeliveryType.W2W,
+                new BigDecimal(_2_5), new BigDecimal("15"));
+        shipment.setParcels(parcels);
         shipmentsSaved.add(shipmentService.save(shipmentMapper.toDto(shipment)));
-        shipment = new Shipment(clientsSaved.get(0), clientsSaved.get(0), DeliveryType.W2D, 2, 2,
-                new BigDecimal("19.5"), new BigDecimal("0.5"), new BigDecimal("20.5"));
+
+        List<ParcelItem> parcelItems = new ArrayList<>();
+        ParcelItem parcelItem = new ParcelItem("flashlight", 1, 0.5F, new BigDecimal("50"));
+        parcelItems.add(parcelItem);
+        parcelItem = new ParcelItem("book", 1, 2F, new BigDecimal("58"));
+        parcelItems.add(parcelItem);
+
+        parcels = new ArrayList<>();
+        parcel = new Parcel(2, 2, new BigDecimal(_19_5), new BigDecimal(_0_5));
+        parcel.setParcelItems(parcelItems);
+        parcels.add(parcel);
+
+        shipment = new Shipment(clientsSaved.get(0), clientsSaved.get(0), DeliveryType.W2D,
+                new BigDecimal(_19_5), new BigDecimal("20.5"));
+        shipment.setParcels(parcels);
         shipmentsSaved.add(shipmentService.save(shipmentMapper.toDto(shipment)));
-        shipment = new Shipment(clientsSaved.get(1), clientsSaved.get(0), DeliveryType.D2D, 3, 3,
-                new BigDecimal("8.5"), new BigDecimal("2.25"), new BigDecimal("13.5"));
+
+        // shipment = new Shipment(clientsSaved.get(1), clientsSaved.get(0), DeliveryType.D2D, 3, 3,
+        // new BigDecimal("8.5"), new BigDecimal("2.25"), new BigDecimal("13.5"));
+
+        // shipmentsSaved.add(shipmentService.save(shipmentMapper.toDto(shipment)));
+        parcels = new ArrayList<>();
+        parcel = new Parcel(3, 3, new BigDecimal("8.5"), new BigDecimal("2.25"));
+        parcels.add(parcel);
+
+        shipment = new Shipment(clientsSaved.get(1), clientsSaved.get(0), DeliveryType.D2D,
+                new BigDecimal(_19_5), new BigDecimal("13.5"));
+        shipment.setParcels(parcels);
         shipmentsSaved.add(shipmentService.save(shipmentMapper.toDto(shipment)));
 
         // create PostOffice
-        PostcodePoolDto postcodePoolDto2 = postcodePoolMapper.toDto(new PostcodePool("00002", false));
+        PostcodePoolDto postcodePoolDto2 =
+                postcodePoolMapper.toDto(new PostcodePool(_00002, false));
         PostcodePoolDto postcodePoolDtoSaved = postcodePoolService.save(postcodePoolDto2);
-        PostOffice postOffice = new PostOffice("Lviv post office", addressMapper.toEntity(addressesSaved.get(0)),
-                postcodePoolMapper.toEntity(postcodePoolDtoSaved));
+        PostOffice postOffice =
+                new PostOffice("Lviv post office", addressMapper.toEntity(addressesSaved.get(0)),
+                        postcodePoolMapper.toEntity(postcodePoolDtoSaved));
         PostOfficeDto postOfficeSaved = postOfficeService.save(postOfficeMapper.toDto(postOffice));
-
+        // TODO
         // create ShipmentTrackingDetail
-        ShipmentTrackingDetail shipmentTrackingDetail =
-                new ShipmentTrackingDetail(shipmentMapper.toEntity(shipmentsSaved.get(0)),
-                        postOfficeMapper.toEntity(postOfficeSaved), ShipmentStatus.PREPARED, new Date());
-        shipmentTrackingDetailService.save(shipmentTrackingDetailMapper.toDto(shipmentTrackingDetail));
+        ShipmentTrackingDetail shipmentTrackingDetail = new ShipmentTrackingDetail(
+                shipmentMapper.toEntity(shipmentsSaved.get(0)),
+                postOfficeMapper.toEntity(postOfficeSaved), ShipmentStatus.PREPARED, new Date());
+        shipmentTrackingDetailService
+                .save(shipmentTrackingDetailMapper.toDto(shipmentTrackingDetail));
     }
 
     private void populateTariffGrid() {

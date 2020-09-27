@@ -20,6 +20,7 @@ public class ShipmentDaoImpl implements ShipmentDao {
         this.sessionFactory = sessionFactory;
     }
 
+//TODO ???? not working why???? 
     @Override
     @SuppressWarnings("unchecked")
     public List<Shipment> getAll() {

@@ -1,7 +1,8 @@
 package com.opinta.entity;
 
 import java.math.BigDecimal;
-
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -9,13 +10,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Shipment {
     @Id
@@ -31,24 +34,29 @@ public class Shipment {
     private BarcodeInnerNumber barcode;
     @Enumerated(EnumType.STRING)
     private DeliveryType deliveryType;
-    private float weight;
-    private float length;
-    private float width;
-    private float height;
-    private BigDecimal declaredPrice;
+
     private BigDecimal price;
+
+    @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL)
+    private List<Parcel> parcels;
+
     private BigDecimal postPay;
     private String description;
 
-    public Shipment(Client sender, Client recipient, DeliveryType deliveryType, float weight, float length,
-                    BigDecimal declaredPrice, BigDecimal price, BigDecimal postPay) {
+    public Shipment(Client sender, Client recipient, DeliveryType deliveryType, BigDecimal price,
+            BigDecimal postPay) {
         this.sender = sender;
         this.recipient = recipient;
         this.deliveryType = deliveryType;
-        this.weight = weight;
-        this.length = length;
-        this.declaredPrice = declaredPrice;
         this.price = price;
         this.postPay = postPay;
     }
+
+    @Override
+    public String toString() {
+        return "Shipment [id=" + id + ", sender=" + sender + ", recipient=" + recipient
+                + ", barcode=" + barcode + ", deliveryType=" + deliveryType + ", price=" + price
+                + ", postPay=" + postPay + ", description=" + description + "]";
+    }
+
 }
