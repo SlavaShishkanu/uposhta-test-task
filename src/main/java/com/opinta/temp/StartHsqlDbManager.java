@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
+//TODO
 @Service
 public class StartHsqlDbManager {
     @PostConstruct

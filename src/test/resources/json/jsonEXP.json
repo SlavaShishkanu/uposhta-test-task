@@ -1,0 +1,53 @@
+[{
+	"senderId": 5,
+	"price": 45,
+	"postPay": 71.0,
+	"deliveryType": "D2W",
+	"recipientId": 6,
+	"description": null,
+	"parcels": [
+		{
+			"declaredPrice": 23.5,
+			"price": 33.0,
+			"length": 4.0,
+			"width": 0.0,
+			"weight": 5.0,
+			"parcelItems": [],
+			"height": 0.0
+		}
+	]
+}
+,
+ {
+	"id": 4,
+	"senderId": 5,
+	"recipientId": 6,
+	"deliveryType": "D2W",
+	"parcels": [
+		{
+			"id": 4,
+			"weight": 1.0,
+			"length": 1.0,
+			"width": 0.0,
+			"height": 0.0,
+			"declaredPrice": 200.00,
+			"price": 30.00,
+			"shipmentId": 4,
+			"parcelItems": []
+		},
+		{
+			"id": 5,
+			"weight": 5.0,
+			"length": 4.0,
+			"width": 0.0,
+			"height": 0.0,
+			"declaredPrice": 23.50,
+			"price": 45.00,
+			"shipmentId": 4,
+			"parcelItems": []
+		}
+	],
+	"price": 45.00,
+	"postPay": 71.00,
+	"description": null
+}]

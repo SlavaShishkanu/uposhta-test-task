@@ -1,0 +1,41 @@
+
+	
+{
+	"id": 2,
+	"senderId": 1,
+	"recipientId": 1,
+	"deliveryType": "W2D",
+	"parcels": [
+		{
+			"id": 2,
+			"weight": 2.0,
+			"length": 2.0,
+			"width": 0.0,
+			"height": 0.0,
+			"declaredPrice": 19.50,
+			"price": 30.00,
+			"shipmentId": 2,
+			"parcelItems": [
+				{
+					"id": 1,
+					"name": "flashlight",
+					"quantity": 1,
+					"weight": 0.5,
+					"price": 50.00,
+					"parcelId": 2
+				},
+				{
+					"id": 2,
+					"name": "book",
+					"quantity": 1,
+					"weight": 2.0,
+					"price": 58.00,
+					"parcelId": 2
+				}
+			]
+		}
+	],
+	"price": 30.00,
+	"postPay": 20.50,
+	"description": null
+}

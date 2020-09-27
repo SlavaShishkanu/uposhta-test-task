@@ -1,0 +1,20 @@
+{
+	"senderId": [],
+	"recipientId": [],
+	"deliveryType": "D2W",
+	"parcels": [
+		{
+		    
+			"weight": 5.0,
+			"length": 4.0,
+			"width": 0.0,
+			"height": 0.0,
+			"declaredPrice": 23.50,
+			"price": 33.00,
+			"parcelItems": []
+		}
+	],
+	"price": 48.00,
+	"postPay": 71.00,
+	"description": null
+}

@@ -3,27 +3,26 @@ package com.opinta.service;
 import com.opinta.entity.Counterparty;
 import com.opinta.entity.PostcodePool;
 import java.util.List;
-
 import javax.transaction.Transactional;
-
 import com.opinta.dao.CounterpartyDao;
 import com.opinta.dto.CounterpartyDto;
 import com.opinta.mapper.CounterpartyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import static org.apache.commons.beanutils.BeanUtils.copyProperties;
 
 @Service
 @Slf4j
 public class CounterpartyServiceImpl implements CounterpartyService {
+    private static final String SAVING_COUNTERPARTY = "Saving counterparty {}";
+    private static final String GETTING_ALL_COUNTERPARTIES = "Getting all counterparties";
     private final CounterpartyDao counterpartyDao;
     private final CounterpartyMapper counterpartyMapper;
 
     @Autowired
     public CounterpartyServiceImpl(CounterpartyDao counterpartyDao,
-                                   CounterpartyMapper counterpartyMapper) {
+            CounterpartyMapper counterpartyMapper) {
         this.counterpartyDao = counterpartyDao;
         this.counterpartyMapper = counterpartyMapper;
     }
@@ -31,7 +30,7 @@ public class CounterpartyServiceImpl implements CounterpartyService {
     @Override
     @Transactional
     public List<Counterparty> getAllEntities() {
-        log.info("Getting all counterparties");
+        log.info(GETTING_ALL_COUNTERPARTIES);
         return counterpartyDao.getAll();
     }
 
@@ -54,19 +53,19 @@ public class CounterpartyServiceImpl implements CounterpartyService {
     public Counterparty saveEntity(Counterparty counterparty) {
         List<Counterparty> counterparties = getEntityByPostcodePool(counterparty.getPostcodePool());
         if (counterparties.size() != 0) {
-            log.error("PostcodePool {} is already used in the VPO {}", counterparty.getPostcodePool(),
-                    counterparties);
+            log.error("PostcodePool {} is already used in the VPO {}",
+                    counterparty.getPostcodePool(), counterparties);
             return null;
         }
-        log.info("Saving counterparty {}", counterparty);
+        log.info(SAVING_COUNTERPARTY, counterparty);
         return counterpartyDao.save(counterparty);
     }
 
     @Override
     @Transactional
     public List<CounterpartyDto> getAll() {
-        log.info("Getting all counterparties");
-        List<Counterparty> counterparties =  counterpartyDao.getAll();
+        log.info(GETTING_ALL_COUNTERPARTIES);
+        List<Counterparty> counterparties = counterpartyDao.getAll();
         return counterpartyMapper.toDto(counterparties);
     }
 
@@ -81,7 +80,7 @@ public class CounterpartyServiceImpl implements CounterpartyService {
     @Override
     @Transactional
     public CounterpartyDto save(CounterpartyDto counterpartyDto) {
-        log.info("Saving counterparty {}", counterpartyDto);
+        log.info(SAVING_COUNTERPARTY, counterpartyDto);
         Counterparty counterparty = counterpartyMapper.toEntity(counterpartyDto);
         return counterpartyMapper.toDto(saveEntity(counterparty));
     }
